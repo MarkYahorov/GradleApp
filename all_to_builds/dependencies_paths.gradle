@@ -1,0 +1,9 @@
+apply from:"$rootDir/all_to_builds/dependencies_versions.gradle"
+
+ext {
+    ui_libraries = [
+            "appCompat" : "androidx.appcompat:appcompat:$appCompat",
+            "material"  : "com.google.android.material:material:$material",
+            "constraint": "androidx.constraintlayout:constraintlayout:$constraint"
+    ]
+}

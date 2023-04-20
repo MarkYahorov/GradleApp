@@ -1,0 +1,93 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+apply from: "$rootDir/all_to_builds/some_task.gradle"
+
+android {
+
+    signingConfigs {
+        release {
+        }
+    }
+    namespace 'com.example.gradleapp'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.example.gradleapp"
+        minSdk 26
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    flavorDimensions("mode")
+
+    productFlavors {
+        free {
+            dimension = "mode"
+            applicationId = "com.free.gradleapp"
+        }
+
+        paid {
+            dimension = "mode"
+            applicationId = "com.paid.gradleapp"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            debuggable = true
+        }
+
+        applicationVariants.all { variant ->
+            def customName = ""
+            if (variant.buildType.name == "release") customName = "release_name.apk"
+            else customName = "debug_name.apk"
+            variant.outputs.all {
+                outputFileName = customName
+                println("name of ${variant.buildType.name} is ${outputFileName}")
+            }
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    splits {
+
+        density {
+            enable true
+
+            exclude "xhdpi", "xxhdpi"
+
+            // This is the line of code which got it right
+            compatibleScreens 'small'
+        }
+    }
+}
+apply from: "$rootDir/all_to_builds/dependencies_paths.gradle"
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation ui_libraries.values()
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+}
+
+preBuild.finalizedBy(newSomeTask {})

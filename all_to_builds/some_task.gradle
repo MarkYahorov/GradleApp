@@ -1,0 +1,31 @@
+task("newSomeTask") {
+    it.doLast {
+        android.productFlavors.all { flavor ->
+            def file = project.file("${rootDir.path}\\${flavor.name}")
+            if (!file.isDirectory()) {
+                println("IN NOT DIRECTORY")
+                file.mkdirs()
+                if (file.exists() && file.isDirectory()) {
+                    println("Existed ans DIR")
+                    def newFile = project.file("${rootDir.path}\\${flavor.name}\\${flavor.name}")
+                    if (newFile.exists()) {
+                        newFile.createNewFile()
+                        println("Existed")
+                    }
+                }
+            } else {
+                if (file.exists() && file.isDirectory()) {
+                    println("Existed ans DIR")
+                    def newFile = project.file("${rootDir.path}\\${flavor.name}\\${flavor.name}")
+                    if (!newFile.exists()) {
+                        newFile.createNewFile()
+                        println("Create New File")
+                    } else {
+                        println("Is exists")
+                    }
+                }
+            }
+            println("ALL DONE")
+        }
+    }
+}
